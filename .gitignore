@@ -1,13 +1,9 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files. 
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-sistema-facturacion-frontend\node_modules
-.pnp
+/node_modules
+/.pnp
 .pnp.js
-
-# other dependency management
-package-lock.json
-yarn.lock
 
 # testing
 /coverage

@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import Auth from "./components/Auth/Auth";
 import AdminDashboard from "./components/AdminDashboard/AdminDashboard";
+import SellerDashboard from "./components/SellerDashboard/SellerDashboard";
 import ProductCatalog from "./components/ProductCatalog";
 import ShoppingCart from "./components/ShoppingCart";
 import SelectVendor from "./components/SelectVendor";
@@ -33,6 +34,8 @@ function App() {
         {user ? (
           <>
             {user.tipo_usuario === "admin" && <AdminDashboard />}
+            {user.tipo_usuario === "vendedor" && (<SellerDashboard />
+            )}
             {user.tipo_usuario === "user" && (
               <UserDashboard
                 selectedVendor={selectedVendor}
