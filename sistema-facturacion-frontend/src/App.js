@@ -61,11 +61,23 @@ const UserDashboard = ({ selectedVendor, setSelectedVendor, cart, setCart, user 
     });
   };
 
+  const fetchUser = async (idVendedor) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/api/usuarios/${idVendedor}`);
+      console.log('Usuario obtenido:', response.data);
+      return response.data.nombre_per + ' ' + response.data.apellido_per; // Retorna el nombre completo del vendedor
+    } catch (error) {
+      console.error('Error obteniendo el usuario:', error);
+      return null; // Retorna null en caso de error
+    }
+  };
+  
+
   const removeFromCart = (id_producto) => {
     setCart(prevCart => prevCart.filter(item => item.id_producto !== id_producto));
   };
 
-  const proceedToCheckout = () => {
+  const proceedToCheckout = async () => {
     if (!user || !selectedVendor) {
       console.error('Usuario no autenticado o vendedor no seleccionado');
       return;
@@ -74,7 +86,8 @@ const UserDashboard = ({ selectedVendor, setSelectedVendor, cart, setCart, user 
     const total_factura = cart.reduce((total, item) => total + (item.precio_compra_producto_lote * item.quantity), 0);
 
     const facturaData = {
-      id_metodo_pago: 1, // Cambia según el método de pago seleccionado
+      id_factura: Math.floor(Math.random() * 200),
+      id_metodo_pago: 1 , // Cambia según el método de pago seleccionado
       id_persona: user.id,
       fecha_factura: new Date().toISOString().split('T')[0],
       total_factura: total_factura,
@@ -82,19 +95,22 @@ const UserDashboard = ({ selectedVendor, setSelectedVendor, cart, setCart, user 
       numero_factura: 'FAC-' + Math.floor(Math.random() * 100000),
       productos: cart
     };
-
     // Llama a la API para crear la factura
+    console.log(facturaData);
     axios.post('http://localhost:3000/api/facturas', facturaData)
       .then(response => {
         console.log('Factura creada:', response.data);
         // Redirigir a la página de factura con la información
-        navigate('/invoice', { state: { invoiceData: facturaData } });
       })
       .catch(error => {
         console.error('Error creando la factura:', error);
       });
-  };
 
+      const sellerName = await fetchUser(selectedVendor);
+
+      navigate('/invoice', { state: { invoiceData: facturaData, sellerName } });
+  };
+  
   return (
     <div>
       <SelectVendor setSelectedVendor={setSelectedVendor} />

@@ -130,7 +130,22 @@ router.post('/usuarios', async (req, res) => {
   });
 });
 
+// Obtener un usuario
+router.get('/usuarios/:id', (req, res) => {
+  const { id } = req.params;
+  
+  db.query('SELECT * FROM USUARIO_PERSONA WHERE id_usuario_persona = ?', [id], (err, results) => {
+    if (err) {
+      return res.status(500).send('Error obteniendo el usuario.');
+    }
 
+    if (results.length === 0) {
+      return res.status(404).send('Usuario no encontrado.');
+    }
+
+    res.json(results[0]); // Devuelve el primer resultado (el usuario)
+  });
+});
 
 // Actualizar un usuario
 router.put('/usuarios/:id', (req, res) => {
@@ -186,35 +201,7 @@ router.post('/facturas', (req, res) => {
     if (err) {
       return res.status(500).send('Error creando la factura.');
     }
-    
-    const id_factura = result.insertId;
-    
-    // Insertar los productos de la factura
-    const productosPromises = productos.map(producto => {
-      return new Promise((resolve, reject) => {
-        const detalleFactura = {
-          id_factura: id_factura,
-          id_producto: producto.id_producto,
-          cantidad: producto.quantity,
-          precio_unitario: producto.precio_compra_producto_lote
-        };
-        db.query('INSERT INTO DETALLE_FACTURA SET ?', detalleFactura, (err) => {
-          if (err) reject(err);
-          else resolve();
-        });
-      });
-    });
-    
-    Promise.all(productosPromises)
-      .then(() => {
-        res.json({ id_factura, ...nuevaFactura, productos });
-      })
-      .catch(error => {
-        console.error('Error insertando los detalles de la factura:', error);
-        res.status(500).send('Error creando los detalles de la factura.');
-      });
-  });
-});
+})});
 
 // Ruta para eliminar una factura
 router.delete('/facturas/:id', (req, res) => {
