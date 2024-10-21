@@ -37,7 +37,7 @@ router.post('/login', (req, res) => {
 // Rutas para Productos
 router.get('/productos', (req, res) => {
   const query = `
-    SELECT p.id_producto, p.nombre_pro, p.descripcion_pro, pl.precio_compra_producto_lote, pl.id_lote
+    SELECT p.id_producto, p.nombre_pro, p.descripcion_pro, p.unidad_pro, pl.precio_compra_producto_lote, pl.id_lote
     FROM PRODUCTO p
     LEFT JOIN PRODUCTO_LOTE pl ON p.id_producto = pl.id_producto
     WHERE pl.id_lote IS NOT NULL OR pl.precio_compra_producto_lote > 0
